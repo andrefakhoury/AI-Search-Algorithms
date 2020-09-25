@@ -14,6 +14,6 @@ set(GCC_COVERAGE_LINK_FLAGS    "-fsanitize=address,undefined")
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
-add_executable(IA_Proj1 src/main.cpp src/Graph.cpp)
+add_executable(IA_Proj1 src/main.cpp src/Coordinate.cpp src/Graph.cpp)
 
 add_definitions(-DLOCAL_DEFINE)
