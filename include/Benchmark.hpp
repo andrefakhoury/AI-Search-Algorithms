@@ -9,7 +9,9 @@
 struct Method {
 	std::string name;
 	std::function<std::vector<Coordinate>()> fnSearch;
-	Method(std::string const& name, std::function<std::vector<Coordinate>()> const& fnSearch) : name(name), fnSearch(fnSearch) {}
+	Method(std::string const& name, std::function<std::vector<Coordinate>()> const& fnSearch);
 };
+
+void generateBenchmark(const size_t qttMazes, const size_t repTimes);
 
 #endif //IA_PROJ1_BENCHMARK_HPP

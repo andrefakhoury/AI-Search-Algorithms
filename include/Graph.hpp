@@ -42,7 +42,6 @@ public:
 	std::vector<Coordinate> bestFirstSearch();
 	std::vector<Coordinate> aStar();
 	std::vector<Coordinate> hillClimbing();
-	void benchmark();
 };
 
 #endif //IA_PROJ1_GRAPH_HPP

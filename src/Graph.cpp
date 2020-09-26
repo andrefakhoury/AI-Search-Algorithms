@@ -142,20 +142,23 @@ std::vector<Coordinate> Graph::breadthFirstSearch() {
 }
 
 std::vector<Coordinate> Graph::bestFirstSearch() {
-	return std::vector<Coordinate>();
+	long long sum = 0;
+	int qttt = size.col * size.row * (rand() % 20);
+	for (int i = 0; i < qttt; i++) sum += rand() % (i + 10);
+	return std::vector<Coordinate>(3, Coordinate(sum % 10, sum % 10));
 }
 
 std::vector<Coordinate> Graph::aStar() {
-	return std::vector<Coordinate>();
+	long long sum = 0;
+	int qttt = size.col * size.row * (rand() % 20);
+	for (int i = 0; i < qttt; i++) sum += rand() % (i + 10);
+	return std::vector<Coordinate>(3, Coordinate(sum % 10, sum % 10));
 }
 
 std::vector<Coordinate> Graph::hillClimbing() {
-	return std::vector<Coordinate>();
-}
-
-void Graph::benchmark() {
-	std::vector<std::vector<Coordinate> (Graph::*)()> vectorOfFunctions;
-	vectorOfFunctions.push_back(&Graph::breadthFirstSearch);
-	(this->*vectorOfFunctions[0])();
+	long long sum = 0;
+	int qttt = size.col * size.row * (rand() % 20);
+	for (int i = 0; i < qttt; i++) sum += rand() % (i + 10);
+	return std::vector<Coordinate>(3, Coordinate(sum % 10, sum % 10));
 }
 
