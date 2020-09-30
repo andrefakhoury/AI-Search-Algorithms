@@ -37,6 +37,7 @@ public:
 	void generateRandom(unsigned long seed);
 	void generateRandom(Coordinate fixedSize, unsigned long seed);
 	void outputMatrix(std::ostream& out);
+	bool checkValid();
 	std::vector<Coordinate> depthFirstSearch();
 	std::vector<Coordinate> breadthFirstSearch();
 	std::vector<Coordinate> bestFirstSearch();

@@ -32,6 +32,8 @@ const int REPTIMES = 10; // qtt of times to repeat the search and improve benchm
 
 int main(int argc, char* argv[]) {
 	Graph g;
+	g.generateRandom(Coordinate(10, 10), 3249);
+	g.outputMatrix(std::cerr);
 
 //	std::fstream in("../samples/0.in", std::ios::in);
 //	g.readMatrix(in);
@@ -51,7 +53,7 @@ int main(int argc, char* argv[]) {
 //		dest.close();
 //	}
 //
-	generateBenchmark(QTTMAZES, REPTIMES);
+//	generateBenchmark(QTTMAZES, REPTIMES);
 
 	return 0;
 }

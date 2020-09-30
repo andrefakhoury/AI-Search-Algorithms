@@ -3,6 +3,7 @@
 #include <stack>
 #include <queue>
 #include <algorithm>
+#include <cstring>
 #include "Graph.hpp"
 
 Graph::Graph() : size(0, 0), startingPosition(-1, -1) { }
@@ -25,26 +26,40 @@ void Graph::readMatrix(std::istream &in) {
 
 void Graph::generateRandom(unsigned long seed) {
 	std::mt19937 rng(seed);
-	size.row = (int) (rng() % MAXDIMENSION + 1);
-	size.col = (int) (rng() % MAXDIMENSION + 1);
+	size.row = (int) (rng() % (MAXDIMENSION - 1) + 2);
+	size.col = (int) (rng() % (MAXDIMENSION - 1) + 2);
 	generateRandom(size, seed);
 }
 
 void Graph::generateRandom(Coordinate fixedSize, unsigned long seed) {
+	assert(fixedSize.row >= 2 && fixedSize.col >= 2);
 	assert(fixedSize.valid(Coordinate(MAXDIMENSION + 1, MAXDIMENSION + 1)));
 
 	this->size = fixedSize;
 	std::mt19937 rng(seed);
-	matrix.assign(size.row, std::vector<char>(size.col));
+	matrix.assign(size.row, std::vector<char>(size.col, SPECIAL));
 
-	// TODO
-	const char* possibleElements = "*#-$";
-	for (int row = 0; row < size.row; row++) {
-		for (int col = 0; col < size.col; col++) {
-			matrix[row][col] = possibleElements[rng() % 4];
+	// generate starting and ending position
+	Coordinate starting(rng()%size.row, rng()%size.col);
+	Coordinate ending = starting;
+	while(ending == starting) {
+		ending = Coordinate(rng()%size.row, rng()%size.col);
+	}
+	matrix[starting.row][starting.col] = STARTING;
+	matrix[ending.row][ending.col] = OBJECTIVE;
+	startingPosition = starting;
+
+	for (int qttValid = 1, qttObstacle = 1; !checkValid(); qttValid += 2, qttObstacle++) {
+		qttValid = std::min(qttValid, MAXDIMENSION * MAXDIMENSION);
+		qttObstacle = std::min(qttObstacle, (MAXDIMENSION * MAXDIMENSION) / 2);
+
+		std::string possibleElements = std::string(qttValid, VALID) + std::string(qttObstacle, OBSTACLE);
+		for (int row = 0; row < size.row; row++) {
+			for (int col = 0; col < size.col; col++) if (matrix[row][col] != STARTING && matrix[row][col] != OBJECTIVE) {
+				matrix[row][col] = possibleElements[rng() % possibleElements.size()];
+			}
 		}
 	}
-
 }
 
 void Graph::outputMatrix(std::ostream &out) {
@@ -55,6 +70,31 @@ void Graph::outputMatrix(std::ostream &out) {
 		}
 		out << "\n";
 	}
+}
+
+bool Graph::checkValid() {
+	int countStarting = 0;
+	int countObjective = 0;
+
+	for (int row = 0; row < size.row; row++) {
+		for (int col = 0; col < size.col; col++) {
+			countStarting += matrix[row][col] == STARTING;
+			countObjective += matrix[row][col] == OBJECTIVE;
+			if (matrix[row][col] == SPECIAL) {
+				return false;
+			}
+		}
+	}
+
+	if (countStarting != 1 || countObjective != 1) {
+		return false;
+	}
+
+	if (depthFirstSearch().empty()) {
+		return false;
+	}
+
+	return true;
 }
 
 std::vector<Coordinate> Graph::depthFirstSearch() {
