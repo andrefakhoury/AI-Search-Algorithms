@@ -182,17 +182,123 @@ std::vector<Coordinate> Graph::breadthFirstSearch() {
 }
 
 std::vector<Coordinate> Graph::bestFirstSearch() {
-	long long sum = 0;
-	int qttt = size.col * size.row * (rand() % 20);
-	for (int i = 0; i < qttt; i++) sum += rand() % (i + 10);
-	return std::vector<Coordinate>(3, Coordinate(sum % 10, sum % 10));
+    assert(startingPosition.valid(size));
+
+    Coordinate endingPosition;
+    for (int i = 0; i < size.row; i++) {
+        for (int j = 0; j < size.col; j++) {
+            if (matrix[i][j] == OBJECTIVE) {
+                endingPosition.row = i;
+                endingPosition.col = j;
+            }
+        }
+    }
+
+    std::vector<std::vector<Coordinate>> parent(size.row, std::vector<Coordinate>(size.col, {-1, -1}));
+    std::vector<std::vector<char>> visited(size.row, std::vector<char>(size.col, false));
+
+    using cost_coord = std::pair<int, Coordinate>;
+    auto comp = [](cost_coord a, cost_coord b) { return a.first > b.first; };
+    std::priority_queue<cost_coord, std::vector<cost_coord>, decltype(comp)> pq(comp);
+
+    pq.push({0, startingPosition});
+    visited[startingPosition.row][startingPosition.col] = true;
+
+    while(!pq.empty()) {
+        auto [c, cur] = pq.top();
+        pq.pop();
+
+        if (matrix[cur.row][cur.col] == OBJECTIVE) {
+            break;
+        }
+
+        for (int delta = 0; delta < NDELTA; delta++) {
+            int newRow = cur.row + deltaRow[delta];
+            int newCol = cur.col + deltaCol[delta];
+            Coordinate nxt(newRow, newCol);
+
+            if (nxt.valid(size) && matrix[newRow][newCol] != OBSTACLE && !visited[newRow][newCol]) {
+                visited[newRow][newCol] = true;
+                parent[newRow][newCol] = cur;
+
+                int c_nxt = std::abs(nxt.row - endingPosition.row) + std::abs(nxt.col - endingPosition.col);
+                pq.push({c_nxt, nxt});
+            }
+        }
+    }
+
+    std::vector<Coordinate> path;
+    Coordinate pos = endingPosition;
+    while(pos != Coordinate(-1, -1)) {
+        path.push_back(pos);
+        pos = parent[pos.row][pos.col];
+    }
+    std::reverse(path.begin(), path.end());
+    return path;
 }
 
 std::vector<Coordinate> Graph::aStar() {
-	long long sum = 0;
-	int qttt = size.col * size.row * (rand() % 20);
-	for (int i = 0; i < qttt; i++) sum += rand() % (i + 10);
-	return std::vector<Coordinate>(3, Coordinate(sum % 10, sum % 10));
+    assert(startingPosition.valid(size));
+
+    Coordinate endingPosition;
+    for (int i = 0; i < size.row; i++) {
+        for (int j = 0; j < size.col; j++) {
+            if (matrix[i][j] == OBJECTIVE) {
+                endingPosition.row = i;
+                endingPosition.col = j;
+            }
+        }
+    }
+
+    std::vector<std::vector<Coordinate>> parent(size.row, std::vector<Coordinate>(size.col, {-1, -1}));
+    
+    int max_dist = size.row * size.col + 1;
+    std::vector<std::vector<int>> dist(size.row, std::vector<int>(size.col, max_dist));
+    std::vector<std::vector<int>> cost(size.row, std::vector<int>(size.col, max_dist));
+
+    using cost_coord = std::pair<int, Coordinate>;
+    auto comp = [](cost_coord a, cost_coord b) { return a.first > b.first; };
+    std::priority_queue<cost_coord, std::vector<cost_coord>, decltype(comp)> pq(comp);
+
+    pq.push({0, startingPosition});
+    dist[startingPosition.row][startingPosition.col] = 0;
+    cost[startingPosition.row][startingPosition.col] = 0;
+
+    while(!pq.empty()) {
+        auto [c, cur] = pq.top();
+        pq.pop();
+
+        if (c != cost[cur.row][cur.col]) {
+            continue;
+        }
+        if (matrix[cur.row][cur.col] == OBJECTIVE) {
+            break;
+        }
+
+        for (int delta = 0; delta < NDELTA; delta++) {
+            int newRow = cur.row + deltaRow[delta];
+            int newCol = cur.col + deltaCol[delta];
+            Coordinate nxt(newRow, newCol);
+
+            if (nxt.valid(size) && matrix[newRow][newCol] != OBSTACLE && dist[newRow][newCol] > dist[cur.row][cur.col] + 1) {
+                dist[newRow][newCol] = dist[cur.row][cur.col] + 1;
+                parent[newRow][newCol] = cur;
+
+                int c_nxt = std::abs(nxt.row - endingPosition.row) + std::abs(nxt.col - endingPosition.col);
+                cost[newRow][newCol] = dist[newRow][newCol] + c_nxt;
+                pq.push({cost[newRow][newCol], nxt});
+            }
+        }
+    }
+
+    std::vector<Coordinate> path;
+    Coordinate pos = endingPosition;
+    while(pos != Coordinate(-1, -1)) {
+        path.push_back(pos);
+        pos = parent[pos.row][pos.col];
+    }
+    std::reverse(path.begin(), path.end());
+    return path;
 }
 
 std::vector<Coordinate> Graph::hillClimbing() {
