@@ -6,7 +6,7 @@ There are two ways of compiling this project: **cmake** or directly with **make*
 
 - *make* contains directives *all* and *run*, to compile and run.
 - No arguments must be provided for the execution; 
-- Source code is in `src`;
+- Source code is at `src`;
 - Include *(.hpp)* files are at `include`;
 - Main source file is `src/main.cpp`;
 - *cmake* was actually used by the *IDE* we were using *(CLion)*;
