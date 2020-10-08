@@ -302,9 +302,70 @@ std::vector<Coordinate> Graph::aStar() {
 }
 
 std::vector<Coordinate> Graph::hillClimbing() {
-	long long sum = 0;
-	int qttt = size.col * size.row * (rand() % 20);
-	for (int i = 0; i < qttt; i++) sum += rand() % (i + 10);
-	return std::vector<Coordinate>(3, Coordinate(sum % 10, sum % 10));
+	assert(startingPosition.valid(size));
+
+	std::vector<std::vector<bool>> visited(size.row, std::vector<bool>(size.col));
+	std::vector<std::vector<Coordinate>> parent(size.row, std::vector<Coordinate>(size.col, Coordinate{-1, -1}));
+
+	std::stack<Coordinate> st;
+	st.push(startingPosition);
+	visited[startingPosition.row][startingPosition.col] = true;
+
+	Coordinate endingPosition;
+
+    for (int i = 0; i < size.row; i++) {
+        for (int j = 0; j < size.col; j++) {
+            if (matrix[i][j] == OBJECTIVE) {
+                endingPosition.row = i;
+                endingPosition.col = j;
+            }
+        }
+    }
+
+	while(!st.empty()) {
+		Coordinate cur = st.top();
+		st.pop();
+
+		if (cur == endingPosition) {
+			break;
+		}
+
+		std::vector<Coordinate> orderedNeighbors;
+
+		for (int delta = 0; delta < NDELTA; delta++) {
+			int newRow = cur.row + deltaRow[delta];
+			int newCol = cur.col + deltaCol[delta];
+			Coordinate newCoord(newRow, newCol);
+
+			if (newCoord.valid(size) && matrix[newRow][newCol] != OBSTACLE && !visited[newRow][newCol]) {
+				orderedNeighbors.push_back(newCoord);
+			}
+
+		}
+
+		auto comp = [&](Coordinate& a, Coordinate& b) {
+			int da = abs(a.row - endingPosition.row) + abs(a.col - endingPosition.col);
+			int db = abs(b.row - endingPosition.row) + abs(b.col - endingPosition.col);
+
+			return da < db;
+		};
+
+		std::sort(orderedNeighbors.begin(), orderedNeighbors.end(), comp);
+
+		for (Coordinate& c : orderedNeighbors){
+			visited[c.row][c.col] = true;
+			parent[c.row][c.col] = cur;
+			st.push(c);
+		}
+	}
+
+	std::vector<Coordinate> path;
+	Coordinate pos = endingPosition;
+	while(pos != Coordinate(-1, -1)) {
+			path.push_back(pos);
+			pos = parent[pos.row][pos.col];
+	}
+	reverse(path.begin(), path.end());
+	return path;
 }
 
