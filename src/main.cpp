@@ -27,16 +27,19 @@
 #include "Graph.hpp"
 #include "Benchmark.hpp"
 
-const int QTTMAZES = 4; // qtt of random matrices to generate
-const int REPTIMES = 10; // qtt of times to repeat the search and improve benchmark precision
+const int QTTMAZES = 2; // qtt of random matrices to generate
+const int REPTIMES = 5; // qtt of times to repeat the search and improve benchmark precision
 
 int main(int argc, char* argv[]) {
 	Graph g;
-	g.generateRandom(Coordinate(10, 10), 3249);
-	g.outputMatrix(std::cerr);
 
 //	std::fstream in("../samples/0.in", std::ios::in);
 //	g.readMatrix(in);
+
+	g.generateRandom(Coordinate(30, 30), 5);
+
+	visualizeSearches(g);
+
 //	auto x = g.bestFirstSearch();
 //	for (auto c : x) {
 //		std::cout << c.row << " " << c.row << "\n";

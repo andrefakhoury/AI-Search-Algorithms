@@ -12,6 +12,7 @@ struct Method {
 	Method(std::string const& name, std::function<std::vector<Coordinate>()> const& fnSearch);
 };
 
-void generateBenchmark(const size_t qttMazes, const size_t repTimes);
+void generateBenchmark(size_t qttMazes, size_t repTimes);
+void visualizeSearches(Graph &graph);
 
 #endif //IA_PROJ1_BENCHMARK_HPP
