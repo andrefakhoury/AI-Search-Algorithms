@@ -12,6 +12,10 @@ struct Method {
 	Method(std::string const& name, std::function<std::vector<Coordinate>()> const& fnSearch);
 };
 
+// PATH to the files, from the view of executable. If the executable is at the same level, remove the '../'
+#define PATH_GRAPHS "../graphs"
+#define PATH_VISUALIZE "../visualize"
+
 void generateBenchmark(size_t qttMazes, size_t repTimes);
 void visualizeSearches(Graph &graph);
 

@@ -3,7 +3,6 @@
 #include <stack>
 #include <queue>
 #include <algorithm>
-#include <cstring>
 #include "Graph.hpp"
 
 Graph::Graph() : size(0, 0), startingPosition(-1, -1) { }
@@ -205,7 +204,7 @@ std::vector<Coordinate> Graph::bestFirstSearch() {
     visited[startingPosition.row][startingPosition.col] = true;
 
     while(!pq.empty()) {
-        auto [c, cur] = pq.top();
+		Coordinate cur = pq.top().second;
         pq.pop();
 
         if (matrix[cur.row][cur.col] == OBJECTIVE) {
@@ -350,7 +349,7 @@ std::vector<Coordinate> Graph::hillClimbing() {
 			return da < db;
 		};
 
-		std::sort(orderedNeighbors.begin(), orderedNeighbors.end(), comp);
+		std::sort(orderedNeighbors.rbegin(), orderedNeighbors.rend(), comp);
 
 		for (Coordinate& c : orderedNeighbors){
 			visited[c.row][c.col] = true;

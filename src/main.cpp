@@ -13,13 +13,22 @@
  *    \_____/\____/ /____/
  *          \______/
  *
- * Trabalho 1 de I.A. - 2020.2 - ICMC USP
- * Benchmarking de métodos de busca
+ * Artificial Intelligence - 2020.2 - ICMC USP
+ * Implementation of mazes and search methods
  *
- *  4482145 - André Luís Mendes Fakhoury
- * XXXXXXXX - david
- * XXXXXXXX - gsoares
- * XXXXXXXX - preischadt
+ * Developed by:
+ *   Andre Luís Mendes Fakhoury
+ *   David Cairuz da Silva
+ *   Gustavo Vinicius Vieira Silva Soares
+ *   Thiago Preischadt Pinheiro
+ *
+ * Important:
+ *   If you are going to run visualize/benchmark, note that:
+ *     - gnuplot must be installed;
+ *     - 'visualize/vis.gp' and 'graphs/gen.gp' must have execution permission (chmod +x)
+ *     - Maybe you'll have to change some #defines at 'include/Benchmark.hpp', according to the 'level' of the execution file
+ *
+ * Have fun! :)
  */
 
 #include <iostream>
@@ -31,32 +40,22 @@ const int QTTMAZES = 2; // qtt of random matrices to generate
 const int REPTIMES = 5; // qtt of times to repeat the search and improve benchmark precision
 
 int main(int argc, char* argv[]) {
+	// visualize path from each method on some random graph with fixed size and seed
 	Graph g;
-
-//	std::fstream in("../samples/0.in", std::ios::in);
-//	g.readMatrix(in);
-
-	g.generateRandom(Coordinate(30, 30), 5);
-
+	g.generateRandom(Coordinate(50, 30), 132);
 	visualizeSearches(g);
 
-//	auto x = g.bestFirstSearch();
-//	for (auto c : x) {
-//		std::cout << c.row << " " << c.row << "\n";
-//	}
+	// generate some random matrices
+	for (int i = 1; i <= QTTMAZES; i++) {
+		Graph newGraph;
+		std::fstream dest("../samples/" + std::to_string(i) + ".in", std::ios::out);
+		newGraph.generateRandom(i);
+		newGraph.outputMatrix(dest);
+		dest.close();
+	}
 
-//
-//
-//	// generate some random matrices
-//	for (int i = 1; i <= QTTMAZES; i++) {
-//		Graph newGraph;
-//		std::fstream dest("../samples/" + std::to_string(i) + ".in", std::ios::out);
-//		newGraph.generateRandom(i);
-//		newGraph.outputMatrix(dest);
-//		dest.close();
-//	}
-//
-//	generateBenchmark(QTTMAZES, REPTIMES);
+	// run benchmark
+	generateBenchmark(QTTMAZES, REPTIMES);
 
 	return 0;
 }

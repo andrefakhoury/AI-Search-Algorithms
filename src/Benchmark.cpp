@@ -59,11 +59,10 @@ void generateBenchmark(const size_t qttMazes, const size_t repTimes) {
 
 		// execute gnuplot for this data
 		char command[256];
-		sprintf(command, "../graphs/gen.gp %ld %.3lf", it, maxTime * 1.1);
+		sprintf(command, PATH_GRAPHS "/gen.gp %ld %.3lf", it, maxTime * 1.25);
 		system(command);
 	}
 }
-
 
 void visualizeSearches(Graph &graph) {
 	// Initialize benchmark methods
@@ -80,8 +79,6 @@ void visualizeSearches(Graph &graph) {
 
 		std::vector<Coordinate> path = method.fnSearch();
 		std::vector<std::vector<int>> maze(graph.size.row, std::vector<int>(graph.size.col));
-
-		std::cout << method.name << ": " << path.size() << "\n";
 
 		// set color for path
 		for (const Coordinate coord : path) {
@@ -105,8 +102,7 @@ void visualizeSearches(Graph &graph) {
 
 		// execute gnuplot for this data
 		char command[256];
-		sprintf(command, "../visualize/vis.gp \"%s\"", method.name.c_str());
+		sprintf(command, PATH_VISUALIZE "/vis.gp \"%s\"", method.name.c_str());
 		system(command);
-		system("sleep 1");
 	}
 }
