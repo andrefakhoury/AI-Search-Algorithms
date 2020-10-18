@@ -320,16 +320,20 @@ std::vector<Coordinate> Graph::hillClimbing() {
             }
         }
     }
+	
+	std::vector<Coordinate> path;
 
 	while(!st.empty()) {
 		Coordinate cur = st.top();
 		st.pop();
 
+		path.push_back(cur);
+
 		if (cur == endingPosition) {
 			break;
 		}
 
-		std::vector<Coordinate> orderedNeighbors;
+		std::vector<Coordinate> neighbours;
 
 		for (int delta = 0; delta < NDELTA; delta++) {
 			int newRow = cur.row + deltaRow[delta];
@@ -337,34 +341,31 @@ std::vector<Coordinate> Graph::hillClimbing() {
 			Coordinate newCoord(newRow, newCol);
 
 			if (newCoord.valid(size) && matrix[newRow][newCol] != OBSTACLE && !visited[newRow][newCol]) {
-				orderedNeighbors.push_back(newCoord);
+				neighbours.push_back(newCoord);
 			}
 
 		}
 
-		auto comp = [&](Coordinate& a, Coordinate& b) {
+		auto distToEnding = [&](Coordinate& a) {
 			int da = abs(a.row - endingPosition.row) + abs(a.col - endingPosition.col);
-			int db = abs(b.row - endingPosition.row) + abs(b.col - endingPosition.col);
-
-			return da < db;
+			return da;
 		};
 
-		std::sort(orderedNeighbors.rbegin(), orderedNeighbors.rend(), comp);
+		Coordinate bestNeighbor(-1, -1);
 
-		for (Coordinate& c : orderedNeighbors){
-			visited[c.row][c.col] = true;
-			parent[c.row][c.col] = cur;
-			st.push(c);
+		for(Coordinate n : neighbours) {
+			if (bestNeighbor == Coordinate(-1, -1) or distToEnding(bestNeighbor) > distToEnding(n)) {
+				bestNeighbor = n;
+			}
+		}
+
+		if (distToEnding(bestNeighbor) <= distToEnding(cur)) {
+			visited[bestNeighbor.row][bestNeighbor.col] = true;
+			parent[bestNeighbor.row][bestNeighbor.col] = cur;
+			st.push(bestNeighbor);
 		}
 	}
 
-	std::vector<Coordinate> path;
-	Coordinate pos = endingPosition;
-	while(pos != Coordinate(-1, -1)) {
-			path.push_back(pos);
-			pos = parent[pos.row][pos.col];
-	}
-	reverse(path.begin(), path.end());
 	return path;
 }
 

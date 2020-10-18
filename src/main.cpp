@@ -36,7 +36,7 @@
 #include "Graph.hpp"
 #include "Benchmark.hpp"
 
-const int QTTMAZES = 2; // qtt of random matrices to generate
+const int QTTMAZES = 10; // qtt of random matrices to generate
 const int REPTIMES = 5; // qtt of times to repeat the search and improve benchmark precision
 
 int main(int argc, char* argv[]) {
