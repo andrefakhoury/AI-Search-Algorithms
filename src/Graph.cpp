@@ -346,16 +346,9 @@ std::vector<Coordinate> Graph::hillClimbing() {
 	assert(startingPosition.valid(size));
 
 	std::vector<std::vector<bool>> visited(size.row, std::vector<bool>(size.col));
-	std::vector<std::vector<Coordinate>> parent(size.row, std::vector<Coordinate>(size.col, Coordinate{-1, -1}));
-
-	// add starting vertex to stack
-	std::stack<Coordinate> st;
-	st.push(startingPosition);
-	visited[startingPosition.row][startingPosition.col] = true;
-
 	Coordinate endingPosition;
 
-	// get ending position to apply heuristic
+	// get ending position to get next node
     for (int i = 0; i < size.row; i++) {
         for (int j = 0; j < size.col; j++) {
             if (matrix[i][j] == OBJECTIVE) {
@@ -364,53 +357,47 @@ std::vector<Coordinate> Graph::hillClimbing() {
             }
         }
     }
+
+	// lambda function that will be used to get next node
+	auto distToEnding = [&](Coordinate& a) {
+		int da = abs(a.row - endingPosition.row) + abs(a.col - endingPosition.col);
+		return da;
+	};
 	
 	std::vector<Coordinate> path;
+	Coordinate cur = startingPosition;
 
-	while(!st.empty()) {
-		Coordinate cur = st.top();
-		st.pop();
-
+	while(!visited[cur.row][cur.col]) {
 		path.push_back(cur);
+		visited[cur.row][cur.col] = true;
 
+		// reached the end of the maze
 		if (cur == endingPosition) {
 			break;
 		}
 
-		std::vector<Coordinate> neighbours;
+		Coordinate bestNeighbor = cur;
 
-		// try each neighbour
+		// get each neighbour
 		for (int delta = 0; delta < NDELTA; delta++) {
 			int newRow = cur.row + deltaRow[delta];
 			int newCol = cur.col + deltaCol[delta];
 			Coordinate newCoord(newRow, newCol);
 
+			// check if neighbour is valid and univisted
 			if (newCoord.valid(size) && matrix[newRow][newCol] != OBSTACLE && !visited[newRow][newCol]) {
-				neighbours.push_back(newCoord);
+				int dneigh = distToEnding(newCoord);
+
+				// if neighbour has steeper climb
+				if (bestNeighbor == Coordinate(-1, -1) or dneigh < distToEnding(bestNeighbor)) {
+					bestNeighbor = newCoord;
+				}
 			}
 
 		}
 
-		// see who's best
-		auto distToEnding = [&](Coordinate& a) {
-			int da = abs(a.row - endingPosition.row) + abs(a.col - endingPosition.col);
-			return da;
-		};
-
-		Coordinate bestNeighbor(-1, -1);
-
-		for(Coordinate n : neighbours) {
-			if (bestNeighbor == Coordinate(-1, -1) or distToEnding(bestNeighbor) > distToEnding(n)) {
-				bestNeighbor = n;
-			}
-		}
-
-		// go to best next candidate
-		if (distToEnding(bestNeighbor) <= distToEnding(cur)) {
-			visited[bestNeighbor.row][bestNeighbor.col] = true;
-			parent[bestNeighbor.row][bestNeighbor.col] = cur;
-			st.push(bestNeighbor);
-		}
+		// go to best next candidate (may not change if local optima was reached)
+		cur = bestNeighbor;
 	}
 
 	return path;
