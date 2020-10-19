@@ -27,8 +27,6 @@
  *     - gnuplot must be installed;
  *     - 'visualize/vis.gp' and 'graphs/gen.gp' must have execution permission (chmod +x)
  *     - Maybe you'll have to change some #defines at 'include/Benchmark.hpp', according to the 'level' of the execution file
- *
- * Have fun! :)
  */
 
 #include <iostream>

@@ -3,7 +3,6 @@ project(IA_Proj1)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 # Include the include directory that contains the hpp files
 include_directories(include)
 

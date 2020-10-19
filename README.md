@@ -14,6 +14,8 @@ There are two ways of compiling this project: **cmake** or directly with **make*
 
 ### Notes
 
+This project was developed using Linux, C++ and Gnuplot.
+
 If you are going to run some *Benchmark.cpp* function, you may have to install gnuplot.
 
 Also, take a look at the *main.cpp* header! It contains some additional notes.

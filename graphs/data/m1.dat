@@ -1,5 +1,5 @@
-0 "Depth-first" 0.15967
-1 "Breadth-first" 0.18167
-2 "Best-first" 0.49438
-3 "A*" 0.63187
-4 "Hill-Climbing" 0.01544
+0 "Depth-first" 0.24609
+1 "Breadth-first" 0.28515
+2 "Best-first" 0.83640
+3 "A*" 2.69836
+4 "Hill-Climbing" 0.04528

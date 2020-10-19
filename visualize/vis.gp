@@ -9,7 +9,7 @@ set rmargin screen 0.9
 set tmargin screen 0.9
 set bmargin screen 0.1
 
-set title "Path found using ".ARG1
+set title ARG1." path"
 set term png
 set output "../visualize/result/".ARG1.".png"
 # set palette mode RGB

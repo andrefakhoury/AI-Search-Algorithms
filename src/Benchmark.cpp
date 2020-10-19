@@ -2,10 +2,18 @@
 #include <iomanip>
 #include "Benchmark.hpp"
 
-Method::Method(const std::string &name, const std::function<std::vector<Coordinate>()> &fnSearch) : name(name), fnSearch(fnSearch) { }
+Method::Method(const std::string &name, const std::function<std::vector<Coordinate>()> &fnSearch) :
+	name(name), fnSearch(fnSearch) { }
 
+/**
+ * Initialize a vector with each search method on the graph send as reference
+ * @param graph Graph to be used by each method
+ * @return Vector with every method
+ */
 std::vector<Method> initializeMethods(Graph &graph) {
 	std::vector<Method> methods;
+
+	// declare each search function with a lambda function that captures the graph as reference
 	methods.emplace_back("Depth-first", [&]() {
 		return graph.depthFirstSearch();
 	});
@@ -29,6 +37,7 @@ void generateBenchmark(const size_t qttMazes, const size_t repTimes) {
 	Graph graph;
 	std::vector<Method> methods = initializeMethods(graph);
 
+	// iterate each maze
 	for (size_t it = 0; it <= qttMazes; it++) {
 		std::fstream in("../samples/" + std::to_string(it) + ".in", std::ios::in);
 		std::fstream gnuplotData("../graphs/data/m" + std::to_string(it) + ".dat", std::ios::out);
@@ -36,11 +45,14 @@ void generateBenchmark(const size_t qttMazes, const size_t repTimes) {
 
 		double maxTime = 0;
 
+		// prints the number of current maze that is being benchmarked
 		std::cout << "Maze " << it << "...\n";
 
+		// iterate each method
 		for (int idm = 0; idm < (int) methods.size(); idm++) {
 			Method const& method = methods[idm];
 			double elapsed = 0;
+			// iterate the same method repTimes
 			for (size_t rep = 0; rep < repTimes; rep++) {
 				graph.readMatrix(in);
 				clock_t clockIni = clock();
@@ -68,17 +80,25 @@ void visualizeSearches(Graph &graph) {
 	// Initialize benchmark methods
 	std::vector<Method> methods = initializeMethods(graph);
 
+	// useless function to print empty maze
+	methods.emplace_back("Empty", [&]() {
+		return std::vector<Coordinate>{};
+	});
+
 	// define each color
 	const int COLOR_PATH = 2;
 	const int COLOR_START = 1;
-	const int COLOR_OBSTACLE = 5;
+	const int COLOR_OBSTACLE = 0;
+	const int COLOR_NONE = 5;
 
 	// execute each method
 	for (const Method method : methods) {
 		std::fstream gnuplotData("../visualize/data/" + method.name + ".dat", std::ios::out);
 
 		std::vector<Coordinate> path = method.fnSearch();
-		std::vector<std::vector<int>> maze(graph.size.row, std::vector<int>(graph.size.col));
+		std::vector<std::vector<int>> maze(graph.size.row, std::vector<int>(graph.size.col, COLOR_NONE));
+
+		std::cerr << "Size of path using " << method.name << ": " << path.size() << "\n";
 
 		// set color for path
 		for (const Coordinate coord : path) {
